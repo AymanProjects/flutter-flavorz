@@ -143,7 +143,7 @@ void main() async {
 
 ``` Location: project-root > pubspec.yaml ```
 
-Here is where you define the environment that you wish to run 😊.
+Here is where you choose the environment that you wish to run 😊.
 
 When you open pubspec.yaml, you will find an attribute called 'env'
 
