@@ -47,7 +47,7 @@ You can add as many attributes as you wish, as long as you follow the following 
 * All items inside the 'environments' list must have identical set of attributes
   ```In other words, if you define 'version_number' in the first item, them you must also add 'version_number' to the rest of the items in the list.```
 * All attributes must be also defined insid the 'Environemt' class as explained in the next step.
-* All items must have 'id' attribute,and with unique value.
+* All items must have 'id' attribute, and with unique value.
 
 ### 'Environment' Class
 
@@ -82,7 +82,7 @@ factory Environment._fromMap(Map<String, dynamic> map) {
 
 All environments that are defined inside 'env_config' must be also defined here as well. For example:
 
-Given an 'env_config,json' file like this:
+Given an 'env_config.json' file like this:
 
 ```json
 {
