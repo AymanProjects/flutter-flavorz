@@ -1,0 +1,29 @@
+{
+    "environments": [
+        {
+            "id": 0,
+            "base_url": "https://10.55.47.40:1102/api/",
+            "version_number": "Dev 2.0.12"
+        },
+        {
+            "id": 1,
+            "base_url": "https://localhost:44340/api/",
+            "version_number": "Local 1.0.9"
+        },
+        {
+            "id": 2,
+            "base_url": "https://localhost:44340/api/",
+            "version_number": "Mock 1.0.12"
+        },
+        {
+            "id": 3,
+            "base_url": "https://cpass.sapublichosting.com/api/",
+            "version_number": "v1.1.1"
+        },
+        {
+            "id": 4,
+            "base_url": "https://cpassqa.sapublichosting.com/api/",
+            "version_number": "QA 1.1.0"
+        }
+    ]
+}
