@@ -16,7 +16,7 @@ There are 4 components in this template that you should know about:
 ``` Location: project-root > config > env_config.json ```
 
 The env_config file holds the configurations for each environment you have.  
-Following is a sample of the file with 5 different environments:
+Following is a sample of the file with 3 different environments:
 
 ```json
 {
