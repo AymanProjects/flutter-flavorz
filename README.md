@@ -158,3 +158,7 @@ env: 2
 Here, we put 2 in front of 'env', that means we want to run the environment with id equals to 2. In our case, inside 'env_config', we defined 'Mock' environment with id equals to 2.
 
 When we run the app, we will be running inside the mock invironment.
+
+## NOTES: 
+
+* This project uses 'yaml' pachage, and I already included it in the pubspec.yaml file. 
