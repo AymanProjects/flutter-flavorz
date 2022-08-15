@@ -161,4 +161,4 @@ When we run the app, we will be running inside the mock invironment.
 
 ## NOTES: 
 
-* This project uses 'yaml' pachage, and I already included it in the pubspec.yaml file. 
+* This project uses 'yaml' pachage, and I already included it in the pubspec.yaml file.
