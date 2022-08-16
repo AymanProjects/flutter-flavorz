@@ -1,0 +1,16 @@
+targets: 
+  $default:
+    sources:
+      - $package$
+      - lib/**
+    builders:
+      flavorz|flavorBuilder:
+        enabled: true
+
+builders:
+  flavorBuilder:
+    import: 'package:flavorz/flavorz.dart'
+    builder_factories: ['build']
+    build_extensions: {'.flavor.json': ['.flavor.dart']}
+    build_to: source
+    auto_apply: dependents
