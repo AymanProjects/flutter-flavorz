@@ -13,10 +13,13 @@ const environmentsJsonKey = "environments";
 /// The key from the json file that holds the id of the environment(flavor) that we wish to run.
 const environmentToRunJsonKey = "environmentToRun";
 
-/// The `FlavorBuilder` is a code gerenator that will look for file
-/// that ends with [inputExtension] inside the lib folder, and consturct a new dart file that will
+/// The `FlavorBuilder` is a code gerenator that will look for files
+/// that end with [inputExtension] inside the lib folder, and consturct a new dart file that will
 /// contain `Environment` class, that will be used across the app.
-/// The new file will end with [outputExtension].
+///
+/// The generated file will have the same name & path of the input file but with this extension: [outputExtension].
+///
+/// For more info. refer to the README.md file
 class FlavorBuilder implements Builder {
   /// Specify the input & output file extensions
   @override
@@ -24,7 +27,7 @@ class FlavorBuilder implements Builder {
     inputExtension: [outputExtension]
   };
 
-  /// The build function will be called for each file that ends with [inputExtension].
+  /// This build function will be called for each file that ends with [inputExtension].
   /// In our case, there should be only one file.
   @override
   Future<void> build(BuildStep buildStep) async {
@@ -62,6 +65,8 @@ class FlavorBuilder implements Builder {
 
     return '''
 /// Auto Generated. Do Not Edit ⚠️
+/// 
+/// For more info. refer to the README.md file
 
 import 'dart:convert';
 import 'dart:io';
@@ -79,8 +84,8 @@ class Environment {
 ${_generateAttributes(flavor)}
   ${_generatePrivateConstructor(flavor)}
 
-  /// `type` is an `enum`, to be used for comparison, instead of id & name
-  EnvironmentType get type => EnvironmentType.fromId(_id);
+  /// `type` is an `enum`, to be used for comparison, instead of hardcoding the name
+  EnvironmentType get type => EnvironmentType.fromString(_name);
 
   static Environment? _this;
 
@@ -97,13 +102,12 @@ ${_generateAttributes(flavor)}
   /// Must be called at the start of the application.
   /// It will initialize the environment based on the `environmentToRun` attribute defined in the json file
   static Future<void> init() async {
-    final relativeJsonPath = pathToJsonConfigFile.split('/').last;
-    final content = await File(relativeJsonPath).readAsString();
+    final content = await File(pathToJsonConfigFile).readAsString();
     Map<String, dynamic> json = jsonDecode(content);
     List<Environment> environments = _loadAllEnvironments(json);
-    int environmnetToRunId = json[environmentToRunJsonKey];
+    final environmnetToRunId = json[environmentToRunJsonKey] as String;
     final matchedEnvironments =
-        environments.where((env) => env._id == environmnetToRunId);
+        environments.where((env) => env._name == environmnetToRunId);
     if (matchedEnvironments.isNotEmpty) {
       _this = matchedEnvironments.first;
     } else {
@@ -120,6 +124,8 @@ ${_generateAttributes(flavor)}
   }
 
   ${_generateFromMapFuntion(flavor)}
+
+  ${_generateToString(flavor)}
 }
 
 ${_generateEnumTypes(flavors)}
@@ -176,9 +182,7 @@ $attributes
       final flavor = flavors[i] as Map<String, dynamic>;
       final nameAttribute =
           flavor.entries.firstWhere((attr) => attr.key == '_name');
-      final idAttribute =
-          flavor.entries.firstWhere((attr) => attr.key == '_id');
-      types += '  ${nameAttribute.value}(${idAttribute.value})';
+      types += '  ${nameAttribute.value}';
       if (i != flavors.length - 1) {
         types += ',\n';
       } else {
@@ -188,13 +192,25 @@ $attributes
     return '''
 enum EnvironmentType {
 $types
-  
-  const EnvironmentType(this.id);
-  final int id;
 
-  factory EnvironmentType.fromId(int id) {
-    return values.firstWhere((e) => e.id == id);
+  factory EnvironmentType.fromString(String name) {
+    return values.firstWhere((EnvironmentType e) => e.name == name);
   }
 }''';
+  }
+
+  String _generateToString(Map<String, dynamic> flavor) {
+    String attributes = '';
+    for (var entry in flavor.entries) {
+      attributes += '"${entry.key}": \$${entry.key}';
+      if (entry.key != flavor.entries.last.key) {
+        attributes += ',';
+      }
+    }
+    return '''
+@override
+  String toString() {
+    return '{$attributes}';
+  }''';
   }
 }
