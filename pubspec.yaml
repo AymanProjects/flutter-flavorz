@@ -1,6 +1,7 @@
 name: flavorz
-description: "Different environments for your application 🍧, with pure Dart 🎯"
-version: 1.0.0
+description: "Generate Different Environments For Your Application From A Single Json File. With Pure Dart."
+version: 1.0.1
+homepage: https://github.com/AymanProjects/dart-flavorz
 
 environment:
   sdk: '>=2.17.6 <3.0.0'
