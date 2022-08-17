@@ -1,5 +1,5 @@
 name: flavorz
-description: "Different Environments For Your Application, With Pure Dart"
+description: "Generate Different Environments For Your Application From A Single Json File. With Pure Dart."
 version: 1.0.0
 homepage: https://github.com/AymanProjects/dart-flavorz
 
