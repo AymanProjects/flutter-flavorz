@@ -1,4 +1,4 @@
-# Falvors with Pure Dart 🍧
+# Flavors with Pure Dart 🍧
 
 This package will ease how you manage your app Flavors(Environments).
 
