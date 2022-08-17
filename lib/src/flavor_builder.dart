@@ -120,6 +120,8 @@ ${_generateAttributes(flavor)}
   }
 
   ${_generateFromMapFuntion(flavor)}
+
+  ${_generateToString(flavor)}
 }
 
 ${_generateEnumTypes(flavors)}
@@ -196,5 +198,20 @@ $types
     return values.firstWhere((e) => e.id == id);
   }
 }''';
+  }
+
+  String _generateToString(Map<String, dynamic> flavor) {
+    String attributes = '';
+    for (var entry in flavor.entries) {
+      attributes += '"${entry.key}": \$${entry.key}';
+      if (entry.key != flavor.entries.last.key) {
+        attributes += ',';
+      }
+    }
+    return '''
+@override
+  String toString() {
+    return '{$attributes}';
+  }''';
   }
 }
