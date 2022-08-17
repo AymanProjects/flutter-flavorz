@@ -97,8 +97,7 @@ ${_generateAttributes(flavor)}
   /// Must be called at the start of the application.
   /// It will initialize the environment based on the `environmentToRun` attribute defined in the json file
   static Future<void> init() async {
-    final relativeJsonPath = pathToJsonConfigFile.split('/').last;
-    final content = await File(relativeJsonPath).readAsString();
+    final content = await File(pathToJsonConfigFile).readAsString();
     Map<String, dynamic> json = jsonDecode(content);
     List<Environment> environments = _loadAllEnvironments(json);
     int environmnetToRunId = json[environmentToRunJsonKey];
