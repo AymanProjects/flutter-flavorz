@@ -2,7 +2,9 @@
 
 This package will ease how you manage your app Flavors(Environments).
 
-## Getting Started
+## Getting Started 
+
+Make sure you are running on Dart version `2.17.0` or later.
 
 ### Add this to your package's pubspec.yaml file
 
