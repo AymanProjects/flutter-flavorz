@@ -11,7 +11,7 @@ const pathToJsonConfigFile = 'example/env.flavor.json';
 /// The key of the list of environments(flavors) inside the json file
 const environmentsJsonKey = 'environments';
 
-/// The key from the json file that holds the id of the environment(flavor) that we wish to run.
+/// The key from the json file that holds the name of the environment(flavor) that we wish to run.
 const environmentToRunJsonKey = 'environmentToRun';
 
 class Environment {
@@ -44,9 +44,9 @@ class Environment {
     final content = await File(pathToJsonConfigFile).readAsString();
     Map<String, dynamic> json = jsonDecode(content);
     List<Environment> environments = _loadAllEnvironments(json);
-    final environmnetToRunId = json[environmentToRunJsonKey] as String;
+    final environmnetToRun = json[environmentToRunJsonKey] as String;
     final matchedEnvironments =
-        environments.where((env) => env._name == environmnetToRunId);
+        environments.where((env) => env._name == environmnetToRun);
     if (matchedEnvironments.isNotEmpty) {
       _this = matchedEnvironments.first;
     } else {
