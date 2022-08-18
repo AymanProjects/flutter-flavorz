@@ -66,7 +66,7 @@ class FlavorBuilder implements Builder {
     return '''
 /// Auto Generated. Do Not Edit ⚠️
 /// 
-/// For more info. refer to the README.md file
+/// For more info. refer to the README.md file https://pub.dev/packages/flavorz
 
 import 'dart:convert';
 import 'dart:io';
