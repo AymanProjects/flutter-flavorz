@@ -1,12 +1,12 @@
 /// Auto Generated. Do Not Edit ⚠️
-/// 
+///
 /// For more info. refer to the README.md file
 
 import 'dart:convert';
 import 'dart:io';
 
 /// Path to the json file that holds the configurations of the environments
-const pathToJsonConfigFile = 'example/env.flavor.json';
+const pathToJsonConfigFile = 'example/env.flavorz.json';
 
 /// The key of the list of environments(flavors) inside the json file
 const environmentsJsonKey = 'environments';

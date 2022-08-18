@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:build/build.dart';
 
 /// Input file must end with .json
-const inputExtension = ".flavor.json";
+const inputExtension = ".flavorz.json";
 
 /// Output file must end with .dart
 const outputExtension = ".g.dart";

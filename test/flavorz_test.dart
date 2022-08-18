@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:build_test/build_test.dart';
-import 'package:flavorz/src/flavor_builder.dart';
+import 'package:flavorz/src/flavorz_builder.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('Testing Flavorz Code Generator', () {
-    test('Run FlavorBuilder Generator For .flavor.json File', () async {
+    test('Run FlavorBuilder Generator For .flavorz.json File', () async {
       final inputSample =
           File('test/test_samples/input_sample.json').readAsStringSync();
 
@@ -24,7 +24,7 @@ void main() {
       await testBuilder(
         FlavorBuilder(),
         {
-          "flavorz|lib/env_config.flavor.json": inputSample,
+          "flavorz|lib/env_config.flavorz.json": inputSample,
         },
         outputs: {
           "flavorz|lib/env_config.g.dart": outputSampleNormalized,
