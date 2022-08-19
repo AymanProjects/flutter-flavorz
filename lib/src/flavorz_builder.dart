@@ -69,7 +69,7 @@ class FlavorBuilder implements Builder {
 /// For more info. refer to the README.md file https://pub.dev/packages/flavorz
 
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/services.dart';
 
 /// Path to the json file that holds the configurations of the environments
 const pathToJsonConfigFile = '$inputFileId';
@@ -102,7 +102,7 @@ ${_generateAttributes(flavor)}
   /// Must be called at the start of the application.
   /// It will initialize the environment based on the `environmentToRun` attribute defined in the json file
   static Future<void> init() async {
-    final content = await File(pathToJsonConfigFile).readAsString();
+    final content = await rootBundle.loadString(pathToJsonConfigFile);
     Map<String, dynamic> json = jsonDecode(content);
     List<Environment> environments = _loadAllEnvironments(json);
     final environmnetToRun = json[environmentToRunJsonKey] as String;
