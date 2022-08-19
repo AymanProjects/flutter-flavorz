@@ -112,7 +112,7 @@ ${_generateAttributes(flavor)}
       _this = matchedEnvironments.first;
     } else {
       throw Exception(
-          'The environment that you wish to run doesn't exist in \$pathToJsonConfigFile');
+          'The environment that you wish to run does not exist in \$pathToJsonConfigFile');
     }
   }
 
