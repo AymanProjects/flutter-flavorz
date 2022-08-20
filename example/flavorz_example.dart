@@ -1,4 +1,4 @@
-import 'env.g.dart';
+import 'env.flavorz.dart';
 
 /// After you running `dart run build_runner build`,
 /// you can write the following in your main (uncomment the lines)

@@ -1,5 +1,5 @@
 {
-    "environmentToRun": "dev",
+    "default": "dev",
     "environments": [
         {
             "_name": "dev",
