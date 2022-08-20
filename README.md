@@ -64,7 +64,7 @@ Following is a sample of how the file should look like:
 
 ```json
 {
-    "default": 0,
+    "default": "dev",
     "environments": [
         {
             "_name": "dev",
