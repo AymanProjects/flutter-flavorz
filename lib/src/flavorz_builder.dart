@@ -58,16 +58,12 @@ class FlavorBuilder implements Builder {
     /// Since all elements in the `flavors` list are identical in terms of structure,
     /// we will just grab the first element to generate the `Environment` class from it.
     final flavors = jsonDecode(inputContent)[environmentsJsonKey] as List;
-    final flavor = flavors.first as Map<String, dynamic>;
 
     return '''
 /// Auto Generated. Do Not Edit ⚠️
 ///
 /// For more info. refer to the README.md file https://pub.dev/packages/flavorz
 ///
-
-/// This is the content of the .flavorz.json file
-const jsonConfigFileContent = $inputContent;
 
 /// This is the key of the list of environments(flavors) inside the .flavorz.json file
 const environmentsJsonKey = '$environmentsJsonKey';
@@ -81,8 +77,8 @@ const defaultEnvironmentJsonKey = '$defaultEnvironmentJsonKey';
 const environmentToRun = String.fromEnvironment('env');
 
 class Environment {
-${_generateAttributes(flavor)}
-  ${_generatePrivateConstructor(flavor)}
+${_generateAttributes(flavors)}
+  ${_generatePrivateConstructor(flavors)}
 
   /// `type` is an `enum`, to be used for comparison, instead of hardcoding the name
   EnvironmentType get type => EnvironmentType.fromString(_name);
@@ -138,30 +134,39 @@ ${_generateAttributes(flavor)}
         .toList();
   }
 
-  ${_generateFromMapFuntion(flavor)}
+  ${_generateFromMapFuntion(flavors)}
 
-  ${_generateToString(flavor)}
+  ${_generateToString(flavors)}
 }
 
 ${_generateEnumTypes(flavors)}
+
+/// This is the content of the .flavorz.json file
+const jsonConfigFileContent = $inputContent;
 ''';
   }
 
   /// Will go over all the attributes in the json file and make the same attributes in the Environment class
-  String _generateAttributes(Map<String, dynamic> flavor) {
+  String _generateAttributes(List flavors) {
     String attributes = '';
-    for (var entry in flavor.entries) {
-      attributes += '  final ${entry.value.runtimeType} ${entry.key};\n';
+    final entries = _getAllPossibleAttributes(flavors);
+    for (var entry in entries) {
+      if (entry.key == "_name") {
+        attributes += '  final ${entry.value.runtimeType} ${entry.key};\n';
+      } else {
+        attributes += '  final ${entry.value.runtimeType}? ${entry.key};\n';
+      }
     }
     return attributes;
   }
 
   /// Will generate a private constructor based on the attributes in the json file
-  String _generatePrivateConstructor(Map<String, dynamic> flavor) {
+  String _generatePrivateConstructor(List flavors) {
     String attributes = "";
-    for (int i = 0; i < flavor.entries.length; i++) {
-      attributes += '    this.${flavor.entries.toList()[i].key},';
-      if (i != flavor.entries.length - 1) {
+    final entries = _getAllPossibleAttributes(flavors);
+    for (int i = 0; i < entries.length; i++) {
+      attributes += '    this.${entries[i].key},';
+      if (i != entries.length - 1) {
         attributes += '\n';
       }
     }
@@ -172,12 +177,18 @@ $attributes
   }
 
   /// Will generate the `fromMap` function to prase json into object of type `Environment`
-  String _generateFromMapFuntion(Map<String, dynamic> flavor) {
+  String _generateFromMapFuntion(List flavors) {
     String attributes = '';
-    for (int i = 0; i < flavor.entries.length; i++) {
-      attributes +=
-          '      map["${flavor.entries.toList()[i].key}"] as ${flavor.entries.toList()[i].value.runtimeType},';
-      if (i != flavor.entries.length - 1) {
+    final entries = _getAllPossibleAttributes(flavors);
+    for (int i = 0; i < entries.length; i++) {
+      if (entries[i].key == "_name") {
+        attributes +=
+            '      map["${entries[i].key}"] as ${entries[i].value.runtimeType},';
+      } else {
+        attributes +=
+            '      map["${entries[i].key}"] as ${entries[i].value.runtimeType}?,';
+      }
+      if (i != entries.length - 1) {
         attributes += '\n';
       }
     }
@@ -214,11 +225,12 @@ $types
 }''';
   }
 
-  String _generateToString(Map<String, dynamic> flavor) {
+  String _generateToString(List flavors) {
     String attributes = '';
-    for (var entry in flavor.entries) {
+    final entries = _getAllPossibleAttributes(flavors);
+    for (var entry in entries) {
       attributes += '"${entry.key}": \$${entry.key}';
-      if (entry.key != flavor.entries.last.key) {
+      if (entry.key != entries.last.key) {
         attributes += ',';
       }
     }
@@ -227,5 +239,19 @@ $types
   String toString() {
     return '{$attributes}';
   }''';
+  }
+
+  List<MapEntry> _getAllPossibleAttributes(List flavors) {
+    final attributes = <MapEntry>[];
+    for (var flavor in flavors) {
+      for (var currentEntry in flavor.entries) {
+        if (attributes
+            .where((entry) => entry.key == currentEntry.key)
+            .isEmpty) {
+          attributes.add(currentEntry);
+        }
+      }
+    }
+    return attributes;
   }
 }
