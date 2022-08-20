@@ -3,21 +3,6 @@
 /// For more info. refer to the README.md file https://pub.dev/packages/flavorz
 ///
 
-/// This is the content of the .flavorz.json file
-const jsonConfigFileContent = {
-    "default": "dev",
-    "environments": [
-        {
-            "_name": "dev",
-            "versionNumber": "Dev 1.0.0"
-        },
-        {
-            "_name": "local",
-            "versionNumber": "Local 1.0.1"
-        }
-    ]
-};
-
 /// This is the key of the list of environments(flavors) inside the .flavorz.json file
 const environmentsJsonKey = 'environments';
 
@@ -31,7 +16,7 @@ const environmentToRun = String.fromEnvironment('env');
 
 class Environment {
   final String _name;
-  final String versionNumber;
+  final String? versionNumber;
 
   Environment._(
     this._name,
@@ -95,7 +80,7 @@ class Environment {
   factory Environment._fromMap(Map<String, dynamic> map) {
     return Environment._(
       map["_name"] as String,
-      map["versionNumber"] as String,
+      map["versionNumber"] as String?,
     );
   }
 
@@ -113,3 +98,18 @@ enum EnvironmentType {
     return values.firstWhere((EnvironmentType e) => e.name == name);
   }
 }
+
+/// This is the content of the .flavorz.json file
+const jsonConfigFileContent = {
+    "default": "dev",
+    "environments": [
+        {
+            "_name": "dev",
+            "versionNumber": "Dev 1.0.0"
+        },
+        {
+            "_name": "local",
+            "versionNumber": "Local 1.0.1"
+        }
+    ]
+};
