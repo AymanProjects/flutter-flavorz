@@ -1,0 +1,13 @@
+{
+    "default": "dev",
+    "environments": [
+        {
+            "_name": "dev",
+            "versionNumber": "Dev 1.0.0"
+        },
+        {
+            "_name": "local",
+            "versionNumber": "Local 1.0.1"
+        }
+    ]
+}

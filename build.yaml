@@ -2,6 +2,8 @@ targets:
   $default:
     sources:
       - $package$
+      - pubspec.*
+      - example/**
       - lib/**
     builders:
       flavorz|flavorBuilder:
@@ -11,6 +13,6 @@ builders:
   flavorBuilder:
     import: 'package:flavorz/flavorz.dart'
     builder_factories: ['build']
-    build_extensions: {'.flavor.json': ['.flavor.dart']}
+    build_extensions: {'.json': ['.dart']}
     build_to: source
     auto_apply: dependents
