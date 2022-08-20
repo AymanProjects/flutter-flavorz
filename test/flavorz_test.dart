@@ -27,7 +27,7 @@ void main() {
           "flavorz|lib/env_config.flavorz.json": inputSample,
         },
         outputs: {
-          "flavorz|lib/env_config.g.dart": outputSampleNormalized,
+          "flavorz|lib/env_config.flavorz.dart": outputSampleNormalized,
         },
         reader: await PackageAssetReader.currentIsolate(),
       );
