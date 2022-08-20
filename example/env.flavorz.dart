@@ -5,11 +5,17 @@
 
 /// This is the content of the .flavorz.json file
 const jsonConfigFileContent = {
-  "default": "dev",
-  "environments": [
-    {"_name": "dev", "versionNumber": "Dev 1.0.0"},
-    {"_name": "local", "versionNumber": "Local 1.0.1"}
-  ]
+    "default": "dev",
+    "environments": [
+        {
+            "_name": "dev",
+            "versionNumber": "Dev 1.0.0"
+        },
+        {
+            "_name": "local",
+            "versionNumber": "Local 1.0.1"
+        }
+    ]
 };
 
 /// This is the key of the list of environments(flavors) inside the .flavorz.json file

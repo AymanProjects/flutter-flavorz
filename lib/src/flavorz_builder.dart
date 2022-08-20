@@ -5,13 +5,13 @@ import 'package:build/build.dart';
 const inputExtension = ".flavorz.json";
 
 /// Output file must end with .dart
-const outputExtension = ".g.dart";
+const outputExtension = ".flavorz.dart";
 
 /// The key of the list of environments(flavors) inside the json file
 const environmentsJsonKey = "environments";
 
-/// The key from the json file that holds the id of the environment(flavor) that we wish to run.
-const environmentToRunJsonKey = "environmentToRun";
+/// This is the key from the .flavorz.json file that specify which environment is the default
+const defaultEnvironmentJsonKey = "default";
 
 /// The `FlavorBuilder` is a code gerenator that will look for files
 /// that end with [inputExtension] inside the lib folder, and consturct a new dart file that will
@@ -32,17 +32,13 @@ class FlavorBuilder implements Builder {
   @override
   Future<void> build(BuildStep buildStep) async {
     /// Store the input file path
-    AssetId inputFileId = buildStep.inputId;
+    final inputFileId = buildStep.inputId;
 
-    /// Decode the content of the input file
-    Map<String, dynamic> json =
-        jsonDecode(await buildStep.readAsString(inputFileId));
-
-    /// Get all flavors from the file as a `list` of `map`
-    final flavors = json[environmentsJsonKey] as List;
+    final inputContent = await buildStep.readAsString(inputFileId);
 
     /// Generate the `Environment` class
-    final outputContent = generateEnvironmentClass(flavors, inputFileId.path);
+    final outputContent =
+        generateEnvironmentClass(inputContent, inputFileId.path);
 
     /// The output file will have the same path & name of the input file
     /// but with [outputExtension] instead of [inputExtension].
@@ -56,29 +52,33 @@ class FlavorBuilder implements Builder {
 
   /// This will gerenate the Environment class based on the attributes inside the json file
   String generateEnvironmentClass(
-    List flavors,
+    String inputContent,
     String inputFileId,
   ) {
     /// Since all elements in the `flavors` list are identical in terms of structure,
     /// we will just grab the first element to generate the `Environment` class from it.
+    final flavors = jsonDecode(inputContent)[environmentsJsonKey] as List;
     final flavor = flavors.first as Map<String, dynamic>;
 
     return '''
 /// Auto Generated. Do Not Edit ⚠️
-/// 
+///
 /// For more info. refer to the README.md file https://pub.dev/packages/flavorz
+///
 
-import 'dart:convert';
-import 'package:flutter/services.dart';
+/// This is the content of the .flavorz.json file
+const jsonConfigFileContent = $inputContent;
 
-/// Path to the json file that holds the configurations of the environments
-const pathToJsonConfigFile = '$inputFileId';
-
-/// The key of the list of environments(flavors) inside the json file
+/// This is the key of the list of environments(flavors) inside the .flavorz.json file
 const environmentsJsonKey = '$environmentsJsonKey';
 
-/// The key from the json file that holds the name of the environment(flavor) that we wish to run.
-const environmentToRunJsonKey = '$environmentToRunJsonKey';
+/// This is the key from the .flavorz.json file that specify which environment is the default
+const defaultEnvironmentJsonKey = '$defaultEnvironmentJsonKey';
+
+/// This will holds the name of the environment that we want to run,
+/// using `flutter run --dart-define="env=dev"`.
+/// if we run without specifying the env variable, then the default value inside json file will be used.
+const environmentToRun = String.fromEnvironment('env');
 
 class Environment {
 ${_generateAttributes(flavor)}
@@ -100,23 +100,38 @@ ${_generateAttributes(flavor)}
   }
 
   /// Must be called at the start of the application.
-  /// It will initialize the environment based on the `environmentToRun` attribute defined in the json file
+  /// It will initialize the environment based on the [environmentToRun]
   static Future<void> init() async {
-    final content = await rootBundle.loadString(pathToJsonConfigFile);
-    Map<String, dynamic> json = jsonDecode(content);
-    List<Environment> environments = _loadAllEnvironments(json);
-    final environmnetToRun = json[environmentToRunJsonKey] as String;
-    final matchedEnvironments =
-        environments.where((env) => env._name == environmnetToRun);
+    final content = jsonConfigFileContent;
+    List<Environment> environments = _loadAllEnvironments(content);
+    String envToRun = environmentToRun;
+
+    if (envToRun.isEmpty) {
+      if (content.keys.contains(defaultEnvironmentJsonKey)) {
+        final defaultEnvironment = content[defaultEnvironmentJsonKey] as String;
+        envToRun = defaultEnvironment;
+      } else {
+        throw Exception(
+            'The \$defaultEnvironmentJsonKey key is not defined inside the .flavorz.json file');
+      }
+    }
+
+    final matchedEnvironments = environments
+        .where((env) => env._name.toLowerCase() == envToRun.toLowerCase());
     if (matchedEnvironments.isNotEmpty) {
       _this = matchedEnvironments.first;
     } else {
       throw Exception(
-          'The environment \$environmnetToRun does not exist in \$pathToJsonConfigFile');
+          'The environment \$envToRun does not exist in .flavorz.json file');
     }
   }
 
   static List<Environment> _loadAllEnvironments(Map<String, dynamic> json) {
+    /// if the [environmentsJsonKey] is not found inside the .flavorz.json file
+    if (!json.keys.contains(environmentsJsonKey)) {
+      throw Exception(
+          'The \$environmentsJsonKey key is not defined inside the .flavorz.json file');
+    }
     final environments = json[environmentsJsonKey] as List;
     return environments
         .map((map) => Environment._fromMap(map as Map<String, dynamic>))
