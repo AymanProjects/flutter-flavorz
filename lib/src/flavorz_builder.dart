@@ -148,7 +148,7 @@ const jsonConfigFileContent = $inputContent;
   /// Will go over all the attributes in the json file and make the same attributes in the Environment class
   String generateAttributes(List flavors) {
     String attributes = '';
-    final entries = getAllPossibleAttributes(flavors);
+    final entries = _getAllPossibleAttributes(flavors);
     for (var entry in entries) {
       if (entry.key == "_name") {
         attributes += '  final ${entry.value.runtimeType} ${entry.key};\n';
@@ -162,7 +162,7 @@ const jsonConfigFileContent = $inputContent;
   /// Will generate a private constructor based on the attributes in the json file
   String generatePrivateConstructor(List flavors) {
     String attributes = "";
-    final entries = getAllPossibleAttributes(flavors);
+    final entries = _getAllPossibleAttributes(flavors);
     for (int i = 0; i < entries.length; i++) {
       attributes += '    this.${entries[i].key},';
       if (i != entries.length - 1) {
@@ -178,7 +178,7 @@ $attributes
   /// Will generate the `fromMap` function to prase json into object of type `Environment`
   String generateFromMapFuntion(List flavors) {
     String attributes = '';
-    final entries = getAllPossibleAttributes(flavors);
+    final entries = _getAllPossibleAttributes(flavors);
     for (int i = 0; i < entries.length; i++) {
       if (entries[i].key == "_name") {
         attributes +=
@@ -205,9 +205,8 @@ $attributes
     String types = "";
     for (int i = 0; i < flavors.length; i++) {
       final flavor = flavors[i] as Map<String, dynamic>;
-      final nameAttribute =
-          flavor.entries.firstWhere((attr) => attr.key == '_name');
-      types += '  ${nameAttribute.value}';
+      final nameAttribute = flavor['_name'] as String;
+      types += '  $nameAttribute';
       if (i != flavors.length - 1) {
         types += ',\n';
       } else {
@@ -226,11 +225,11 @@ $types
 
   String generateToString(List flavors) {
     String attributes = '';
-    final entries = getAllPossibleAttributes(flavors);
+    final entries = _getAllPossibleAttributes(flavors);
     for (var entry in entries) {
       attributes += '"${entry.key}": \$${entry.key}';
       if (entry.key != entries.last.key) {
-        attributes += ',';
+        attributes += ', ';
       }
     }
     return '''
@@ -262,7 +261,7 @@ $types
   ///    "versionNumber": "Local 1.0.1"
   /// ]
   ///
-  List<MapEntry> getAllPossibleAttributes(List flavors) {
+  List<MapEntry> _getAllPossibleAttributes(List flavors) {
     final attributes = <MapEntry>[];
     for (var flavor in flavors) {
       for (var currentEntry in flavor.entries) {
