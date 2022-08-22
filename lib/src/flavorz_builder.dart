@@ -37,24 +37,23 @@ class FlavorBuilder implements Builder {
     final inputContent = await buildStep.readAsString(inputFileId);
 
     /// Generate the `Environment` class
-    final outputContent =
-        generateEnvironmentClass(inputContent, inputFileId.path);
+    final outputContent = generateEnvironmentClass(inputContent);
 
-    /// The output file will have the same path & name of the input file
-    /// but with [outputExtension] instead of [inputExtension].
-    final pathWithOutExtension = inputFileId.path.split('.').first;
-    final outputFileId = AssetId(inputFileId.package, pathWithOutExtension)
-        .addExtension(outputExtension);
+    final outputFileId = createOutputFileId(inputFileId);
 
     /// Finally, create & write to the output file
     await buildStep.writeAsString(outputFileId, outputContent);
   }
 
+  /// The output file will have the same path & name of the input file
+  /// but with [outputExtension] instead of [inputExtension].
+  AssetId createOutputFileId(AssetId inputFileId) {
+    final outputFileId = inputFileId.changeExtension('.dart');
+    return outputFileId;
+  }
+
   /// This will gerenate the Environment class based on the attributes inside the json file
-  String generateEnvironmentClass(
-    String inputContent,
-    String inputFileId,
-  ) {
+  String generateEnvironmentClass(String inputContent) {
     /// Since all elements in the `flavors` list are identical in terms of structure,
     /// we will just grab the first element to generate the `Environment` class from it.
     final flavors = jsonDecode(inputContent)[environmentsJsonKey] as List;
@@ -77,8 +76,8 @@ const defaultEnvironmentJsonKey = '$defaultEnvironmentJsonKey';
 const environmentToRun = String.fromEnvironment('env');
 
 class Environment {
-${_generateAttributes(flavors)}
-  ${_generatePrivateConstructor(flavors)}
+${generateAttributes(flavors)}
+  ${generatePrivateConstructor(flavors)}
 
   /// `type` is an `enum`, to be used for comparison, instead of hardcoding the name
   EnvironmentType get type => EnvironmentType.fromString(_name);
@@ -134,12 +133,12 @@ ${_generateAttributes(flavors)}
         .toList();
   }
 
-  ${_generateFromMapFuntion(flavors)}
+  ${generateFromMapFuntion(flavors)}
 
-  ${_generateToString(flavors)}
+  ${generateToString(flavors)}
 }
 
-${_generateEnumTypes(flavors)}
+${generateEnumTypes(flavors)}
 
 /// This is the content of the .flavorz.json file
 const jsonConfigFileContent = $inputContent;
@@ -147,7 +146,7 @@ const jsonConfigFileContent = $inputContent;
   }
 
   /// Will go over all the attributes in the json file and make the same attributes in the Environment class
-  String _generateAttributes(List flavors) {
+  String generateAttributes(List flavors) {
     String attributes = '';
     final entries = _getAllPossibleAttributes(flavors);
     for (var entry in entries) {
@@ -161,7 +160,7 @@ const jsonConfigFileContent = $inputContent;
   }
 
   /// Will generate a private constructor based on the attributes in the json file
-  String _generatePrivateConstructor(List flavors) {
+  String generatePrivateConstructor(List flavors) {
     String attributes = "";
     final entries = _getAllPossibleAttributes(flavors);
     for (int i = 0; i < entries.length; i++) {
@@ -177,7 +176,7 @@ $attributes
   }
 
   /// Will generate the `fromMap` function to prase json into object of type `Environment`
-  String _generateFromMapFuntion(List flavors) {
+  String generateFromMapFuntion(List flavors) {
     String attributes = '';
     final entries = _getAllPossibleAttributes(flavors);
     for (int i = 0; i < entries.length; i++) {
@@ -202,13 +201,12 @@ $attributes
 
   /// Will generate enum types for each environment in the json file.
   /// The name of each type is matched to the `_name` attribute inside the json file.
-  String _generateEnumTypes(List flavors) {
+  String generateEnumTypes(List flavors) {
     String types = "";
     for (int i = 0; i < flavors.length; i++) {
       final flavor = flavors[i] as Map<String, dynamic>;
-      final nameAttribute =
-          flavor.entries.firstWhere((attr) => attr.key == '_name');
-      types += '  ${nameAttribute.value}';
+      final nameAttribute = flavor['_name'] as String;
+      types += '  $nameAttribute';
       if (i != flavors.length - 1) {
         types += ',\n';
       } else {
@@ -225,13 +223,13 @@ $types
 }''';
   }
 
-  String _generateToString(List flavors) {
+  String generateToString(List flavors) {
     String attributes = '';
     final entries = _getAllPossibleAttributes(flavors);
     for (var entry in entries) {
       attributes += '"${entry.key}": \$${entry.key}';
       if (entry.key != entries.last.key) {
-        attributes += ',';
+        attributes += ', ';
       }
     }
     return '''
@@ -241,6 +239,28 @@ $types
   }''';
   }
 
+  /// We will try to get all the attributes defined in the json file,
+  /// even if the flavors did not have similar attributes.
+  ///
+  /// Given
+  ///  [
+  //     {
+  //       "_name": "dev",
+  //       "date": "10/30"
+  //     },
+  //     {
+  //       "_name": "local",
+  //       "versionNumber": "Local 1.0.1"
+  //     }
+  //   ]
+  ///
+  /// Will result into
+  /// [
+  ///    "_name": "local",
+  ///    "date": "10/30",
+  ///    "versionNumber": "Local 1.0.1"
+  /// ]
+  ///
   List<MapEntry> _getAllPossibleAttributes(List flavors) {
     final attributes = <MapEntry>[];
     for (var flavor in flavors) {
