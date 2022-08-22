@@ -8,18 +8,15 @@ Make sure you are running on Dart version `2.17.0` or later.
 
 ### Add this to your package's pubspec.yaml file
 
-* Add `flavorz` your dependencies.
-* Add `build_runner` to your dev_dependencies, since we are going to use it to generate the code.
+* Add `flavorz` & `build_runner` to your dev_dependencies.
 
 ```yaml
-dependencies:
-  flavorz: ^1.0.0
-
 dev_dependencies:
   build_runner: ^2.2.0
+  flavorz: ^1.0.0
 ```
 
-Now in terminal, run `dart pub get` or `flutter pub get` to install the packages.
+Run `dart pub get` or `flutter pub get` to install the packages.
 
 ## How to Use
 
@@ -51,13 +48,13 @@ Inisde the json file there must be 2 attributes:
 
 * `_name`
 
-You can add as many attributes as you want after the `_name`.
-And you can add as many flavors as you want in the `environments` list.
+You can add as many flavors as you want in the `environments` list.
+And you can add as many attributes as you want after the `_name`.
 
 #### Notes For The Json File
 
 * You should never remove the '_name' attribute
-* It is prefferable to use camelCase format for your attribute names
+* It is preferable to use camelCase format for your attribute names
 * Attributes that start with an underscore will be generated as private
 
 Following is a sample of how the file should look like:
@@ -88,20 +85,18 @@ In your terminal, run `dart run build_runner build` or `flutter pub run build_ru
 to generate the environment file.
 
 After running the command, a new file will be generated.
-The generated file will have the same name & path of the `.flavorz.json` file from previous step.
-The extension of the generated file will be `.flavorz.dart`
-
-In the example above, we created a json file with this name: `env.flavorz.json`,
-That means the generated file's name will be: `env.flavorz.dart`
+The generated file will have the same name & path of the `.flavorz.json` file from previous step. And its extension will be `.flavorz.dart`
 
 The generated file will contain the `Environment` class that we can use across our app.
 
 ## Start Using The Environment Class
 
 * First, from your main file, you must call the `Environment.init()` function. Or else I'll break your PC with an error :)
-* After that, you can access your environment data from anywhere in your application using the factory `Environment()`
+* After that, you can access your environment data from anywhere in your application using the factory `Environment()` after importing the file, as seen below.
 
 ```dart
+import 'env.flavorz.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Environment.init();
