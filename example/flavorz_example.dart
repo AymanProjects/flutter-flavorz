@@ -6,10 +6,7 @@ import 'env.flavorz.dart';
 ///
 /// For more info. refer to the README.md file
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
-  await Environment.init();
-  if (Environment().type == EnvironmentType.dev) {
-    print('We are running the dev environment!');
-  }
-  //runApp()
+  // WidgetsFlutterBinding.ensureInitialized();
+  final type = Environment().type;
+  print(type);
 }

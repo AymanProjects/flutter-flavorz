@@ -31,16 +31,12 @@ class Environment {
   /// This factory is an access point from anywhere in the application.
   /// And it will always return the same instance, since it is a singleton.
   factory Environment() {
-    if (_this == null) {
-      throw Exception(
-          "You must call 'await Environment.init()' at the start of the application");
-    }
+    _this ??= _init();
     return _this!;
   }
 
-  /// Must be called at the start of the application.
-  /// It will initialize the environment based on the [environmentToRun]
-  static Future<void> init() async {
+  /// This will initialize the environment based on the [environmentToRun]
+  static Environment _init() {
     final content = jsonConfigFileContent;
     List<Environment> environments = _loadAllEnvironments(content);
     String envToRun = environmentToRun;
@@ -51,17 +47,17 @@ class Environment {
         envToRun = defaultEnvironment;
       } else {
         throw Exception(
-            'The $defaultEnvironmentJsonKey key is not defined inside the .flavorz.json file');
+            'The $defaultEnvironmentJsonKey key is not defined inside the .flavorz.json file, make sure to include it and regenerate the code again');
       }
     }
 
     final matchedEnvironments = environments
         .where((env) => env._name.toLowerCase() == envToRun.toLowerCase());
     if (matchedEnvironments.isNotEmpty) {
-      _this = matchedEnvironments.first;
+      return matchedEnvironments.first;
     } else {
       throw Exception(
-          'The environment $envToRun does not exist in .flavorz.json file');
+          'The environment $envToRun does not exist in .flavorz.json file, make sure to include it and regenerate the code again');
     }
   }
 
@@ -86,7 +82,7 @@ class Environment {
 
   @override
   String toString() {
-    return '{"_name": $_name,"versionNumber": $versionNumber}';
+    return '{"_name": $_name, "versionNumber": $versionNumber}';
   }
 }
 
