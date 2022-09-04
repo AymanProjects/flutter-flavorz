@@ -91,19 +91,15 @@ The generated file will contain the `Environment` class that we can use across o
 
 ## Start Using The Environment Class
 
-* First, from your main file, you must call the `Environment.init()` function. Or else I'll break your PC with an error :)
-* After that, you can access your environment data from anywhere in your application using the factory `Environment()` after importing the file, as seen below.
+You can access your environment data from anywhere in your application using the factory `Environment()` after importing the file, as seen below.
 
 ```dart
 import 'env.flavorz.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Environment.init();
-  if (Environment().type == EnvironmentType.dev) {
-    print('We are running the dev environment!');
-  }
-  //runApp
+  final type = Environment().type;
+  print(type); // prints 'dev'
 }
 ```
 
