@@ -13,7 +13,7 @@ Make sure you are running on Dart version `2.17.0` or later.
 ```yaml
 dev_dependencies:
   build_runner: ^2.2.0
-  flavorz: ^1.0.0
+  flavorz: ^1.0.5
 ```
 
 Run `dart pub get` or `flutter pub get` to install the packages.

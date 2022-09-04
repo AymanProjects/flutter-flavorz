@@ -17,3 +17,7 @@
 ## 1.0.4
 
 - Added feature to run env from terminal
+
+## 1.0.5
+
+- No longer need to call init() from main
